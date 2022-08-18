@@ -19,6 +19,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.2'
 	implementation 'org.springframework.boot:spring-boot-starter-security:2.7.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.2'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.7.2'
 	runtimeOnly 'org.postgresql:postgresql:42.3.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.2'
 	testImplementation 'org.springframework.security:spring-security-test:5.7.2'

@@ -11,21 +11,18 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class ClientAppConfiguration {
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+public class AppConfiguration {
 
     private final DbProperties dbProperties;
 
     @Autowired
-    public ClientAppConfiguration(DbProperties dbProperties) {
+    public AppConfiguration(DbProperties dbProperties) {
         this.dbProperties = dbProperties;
     }
 
     @Bean
     public DataSource getDataSource() {
-        if (dbProperties.getUsername().isEmpty() || dbProperties.getPassword().isEmpty()) {
-            return null;
-        }
         return DataSourceBuilder
                 .create()
                 .username(dbProperties.getUsername())
