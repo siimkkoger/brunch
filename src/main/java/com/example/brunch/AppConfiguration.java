@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @EnableAutoConfiguration
 @Import({
+        RequestLoggingFilterConfig.class,
         SecurityConfig.class,
-        AppProperties.class
 })
 public class AppConfiguration {
 

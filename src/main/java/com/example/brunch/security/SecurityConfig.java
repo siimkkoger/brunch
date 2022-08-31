@@ -1,17 +1,19 @@
 package com.example.brunch.security;
 
-import com.example.brunch.controller.ControllerUrlPath;
+import com.example.brunch.BrunchUserDetailsService;
+import com.example.brunch.security.filters.BrunchBasicAuthenticationFilter;
+import com.example.brunch.security.filters.JwtAuthenticationFilter;
+import com.example.brunch.util.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,28 +30,43 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @Import({
-        JWTAuthFilter.class,
+        JwtUtils.class,
+        BrunchUserDetailsService.class
 })
 public class SecurityConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
 
-    private final JWTAuthFilter JWTAuthFilter;
+    private final JwtUtils jwtUtils;
+    private final BrunchUserDetailsService brunchUserDetailsService;
 
     @Autowired
-    public SecurityConfig(JWTAuthFilter JWTAuthFilter) {
-        this.JWTAuthFilter = JWTAuthFilter;
+    public SecurityConfig(JwtUtils jwtUtils, BrunchUserDetailsService brunchUserDetailsService) {
+        this.jwtUtils = jwtUtils;
+        this.brunchUserDetailsService = brunchUserDetailsService;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder();
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(brunchUserDetailsService);
+        provider.setPasswordEncoder(bCryptPasswordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean() {
+        return new ProviderManager(daoAuthenticationProvider());
     }
 
     @Bean
     public BasicAuthenticationFilter brunchBasicAuthenticationFilter() {
-        return null;
+        return new BrunchBasicAuthenticationFilter(authenticationManagerBean(), jwtUtils);
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtils, brunchUserDetailsService);
     }
 
     @Bean
@@ -58,26 +75,23 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-        return source;
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // AuthenticationProvider does the actual authentication.
+        // http.authenticationProvider(daoAuthenticationProvider());
+        // DaoAuthenticationProvider uses UserDetailsService for authentication.
+        // http.userDetailsService(brunchUserDetailsService);
         http.cors().and().csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .exceptionHandling()
                 .and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.POST, ControllerUrlPath.REGISTER).permitAll()
-                .mvcMatchers(HttpMethod.POST, ControllerUrlPath.LOGIN).permitAll()
+                .mvcMatchers("/api/**", "/login").authenticated()
+                .mvcMatchers("/register", "/logout").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterAfter(JWTAuthFilter, BasicAuthenticationFilter.class)
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+                .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .httpBasic();
         return http.build();
     }
 

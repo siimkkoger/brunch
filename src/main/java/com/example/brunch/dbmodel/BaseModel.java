@@ -1,4 +1,4 @@
-package com.example.brunch.model;
+package com.example.brunch.dbmodel;
 
 
 import org.hibernate.annotations.CreationTimestamp;
