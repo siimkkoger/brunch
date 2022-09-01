@@ -46,19 +46,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             // Continue to next filter if Bearer token not provided
+            LOGGER.debug("Didn't find Bearer JWT.");
             filterChain.doFilter(request, response);
             return;
         }
 
         TokenBasedAuthentication authentication = null;
-        final DecodedJWT decodedJWT = jwtUtils.decodeJwtToken(authHeader);
+        String token = authHeader.replace("Bearer ", "");
+        final DecodedJWT decodedJWT = jwtUtils.decodeJwtToken(token);
         final String username = decodedJWT.getSubject();
         if (username != null) {
             final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            String token = authHeader.replace("Bearer ", "");
             authentication = new TokenBasedAuthentication(userDetails, token);
         }
-        // TODO : try out auth0 JwtAuthenticationProvider instead
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
         SecurityContextHolder.getContext().setAuthentication(null);

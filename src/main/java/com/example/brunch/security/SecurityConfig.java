@@ -91,7 +91,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
-                .httpBasic();
+                .addFilter(brunchBasicAuthenticationFilter());
         return http.build();
     }
 

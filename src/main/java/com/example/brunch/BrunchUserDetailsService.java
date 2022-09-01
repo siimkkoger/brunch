@@ -37,7 +37,7 @@ public class BrunchUserDetailsService implements UserDetailsService {
         }
         LOGGER.debug("User found in the database: {}", username);
         return new User(
-                account.getEmail(),
+                account.getUsername(),
                 account.getPassword(),
                 account.isEnabled(),
                 true,

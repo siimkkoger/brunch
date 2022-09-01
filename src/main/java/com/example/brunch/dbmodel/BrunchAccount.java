@@ -27,7 +27,7 @@ public class BrunchAccount extends BaseModel {
 
     @Length(min = 1, max = 255)
     @Column(name = "username")
-    private String firstName;
+    private String username;
 
     @Length(max = 255)
     @Column(name = "password", nullable = false)
@@ -35,8 +35,8 @@ public class BrunchAccount extends BaseModel {
 
     @ManyToMany
     @JoinTable(
-            name = "users_roles", schema = "public",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            name = "accounts_roles", schema = "public",
+            joinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
@@ -52,8 +52,8 @@ public class BrunchAccount extends BaseModel {
         return email;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
