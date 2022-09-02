@@ -1,6 +1,6 @@
 package com.example.brunch.security.filters;
 
-import com.example.brunch.util.JwtUtils;
+import com.example.brunch.util.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -19,11 +19,11 @@ public class BrunchBasicAuthenticationFilter extends BasicAuthenticationFilter {
     private static final Logger LOGGER =
             LoggerFactory.getLogger(BrunchBasicAuthenticationFilter.class);
 
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtUtils;
 
     public BrunchBasicAuthenticationFilter(
             final AuthenticationManager authenticationManager,
-            final JwtUtils jwtUtils) {
+            final JwtService jwtUtils) {
         super(authenticationManager);
         this.jwtUtils = jwtUtils;
     }

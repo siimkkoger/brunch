@@ -3,12 +3,20 @@ package com.example.brunch.security;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class TokenBasedAuthentication extends AbstractAuthenticationToken {
+import java.util.ArrayList;
+import java.util.Collections;
 
-    private final UserDetails principal;
+public class JwtAuthenticationToken extends AbstractAuthenticationToken {
+
+    private UserDetails principal;
     private String token;
 
-    public TokenBasedAuthentication(UserDetails principal, String token) {
+    public JwtAuthenticationToken(String token) {
+        super(new ArrayList<>());
+        this.token = token;
+    }
+
+    public JwtAuthenticationToken(UserDetails principal, String token) {
         super(principal.getAuthorities());
         this.principal = principal;
         this.token = token;
@@ -22,9 +30,8 @@ public class TokenBasedAuthentication extends AbstractAuthenticationToken {
         this.token = token;
     }
 
-    @Override
-    public boolean isAuthenticated() {
-        return true;
+    public void setPrincipal(UserDetails principal) {
+        this.principal = principal;
     }
 
     @Override

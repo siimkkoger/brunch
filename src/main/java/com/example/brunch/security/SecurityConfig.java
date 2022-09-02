@@ -3,8 +3,9 @@ package com.example.brunch.security;
 import com.example.brunch.BrunchUserDetailsService;
 import com.example.brunch.security.filters.BrunchBasicAuthenticationFilter;
 import com.example.brunch.security.filters.JwtAuthenticationFilter;
+import com.example.brunch.security.providers.JwtAuthenticationProvider;
 import com.example.brunch.security.roles.BrunchRole;
-import com.example.brunch.util.JwtUtils;
+import com.example.brunch.util.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,18 +40,18 @@ import java.io.IOException;
         securedEnabled = true,
         jsr250Enabled = true)
 @Import({
-        JwtUtils.class,
+        JwtService.class,
         BrunchUserDetailsService.class
 })
 public class SecurityConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
 
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtUtils;
     private final BrunchUserDetailsService brunchUserDetailsService;
 
     @Autowired
-    public SecurityConfig(JwtUtils jwtUtils, BrunchUserDetailsService brunchUserDetailsService) {
+    public SecurityConfig(JwtService jwtUtils, BrunchUserDetailsService brunchUserDetailsService) {
         this.jwtUtils = jwtUtils;
         this.brunchUserDetailsService = brunchUserDetailsService;
     }
@@ -67,8 +65,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationProvider jwtAuthenticationProvider() {
+        return new JwtAuthenticationProvider(jwtUtils, brunchUserDetailsService);
+    }
+
+    @Bean
     public AuthenticationManager authenticationManagerBean() {
-        return new ProviderManager(daoAuthenticationProvider());
+        return new ProviderManager(daoAuthenticationProvider(), jwtAuthenticationProvider());
     }
 
     @Bean
@@ -78,7 +81,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtUtils, brunchUserDetailsService);
+        return new JwtAuthenticationFilter();
     }
 
     @Bean
@@ -88,6 +91,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // TODO : RememberMeAuthenticationFilter
+        // https://stackoverflow.com/questions/41480102/how-spring-security-filter-chain-works
+        http.authenticationManager(authenticationManagerBean());
         http.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
