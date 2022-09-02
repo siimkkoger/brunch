@@ -1,6 +1,6 @@
 package com.example.brunch;
 
-import com.example.brunch.dbmodel.BrunchAccount;
+import com.example.brunch.dbmodel.AccountEntity;
 import com.example.brunch.repository.BrunchAccountRepository;
 import com.example.brunch.security.roles.AbstractBrunchRole;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class BrunchUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        final BrunchAccount account = brunchAccountRepository.findByUsername(username);
+        final AccountEntity account = brunchAccountRepository.findByUsername(username);
         if (account == null) {
             LOGGER.debug("User not found in the database: {}", username);
             throw new UsernameNotFoundException("User not found in the database: " + username);

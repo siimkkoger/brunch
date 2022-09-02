@@ -1,14 +1,14 @@
 package com.example.brunch.repository;
 
-import com.example.brunch.dbmodel.BrunchAccount;
-import com.example.brunch.projections.BrunchAccountProjection;
+import com.example.brunch.dbmodel.AccountEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BrunchAccountRepository extends CrudRepository<BrunchAccount, Integer> {
+public interface BrunchAccountRepository extends CrudRepository<AccountEntity, Integer> {
 
-    BrunchAccount findByUsername(String email);
+    AccountEntity findByUsername(String username);
+    AccountEntity findByEmail(String email);
 
-    BrunchAccountProjection findProjectionByUsername(String email);
+    <T> T findByUsername(String username, Class<T> type);
 }

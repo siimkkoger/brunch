@@ -10,11 +10,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 
 public class BrunchBasicAuthenticationFilter extends BasicAuthenticationFilter {
@@ -38,7 +35,7 @@ public class BrunchBasicAuthenticationFilter extends BasicAuthenticationFilter {
             final Authentication auth) {
         final User account = (User) auth.getPrincipal();
         LOGGER.debug("Successful Basic Authentication, user: {}", account.getUsername());
-        final String token = jwtUtils.createJwtToken(account.getUsername());
+        final String token = jwtUtils.createJwtToken(auth, request);
         response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION);
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         LOGGER.debug("Added a jwt token to header: {}", token);

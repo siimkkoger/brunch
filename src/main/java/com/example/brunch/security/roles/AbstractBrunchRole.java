@@ -16,9 +16,9 @@ public abstract class  AbstractBrunchRole implements BrunchRole {
 
     public static GrantedAuthority createGrantedAuthority(final String code) {
         switch (code) {
-            case ADMIN:
+            case ROLE_ADMIN:
                 return new AdminRole();
-            case USER:
+            case ROLE_USER:
                 return new UserRole();
             default:
                 LOGGER.error("No such role found: {}", code);

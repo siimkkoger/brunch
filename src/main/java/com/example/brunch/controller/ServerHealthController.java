@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = ControllerUrlPath.RUNNING)
+@RequestMapping(value = "/running")
 public class ServerHealthController {
 
     @GetMapping

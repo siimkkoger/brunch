@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
  */
 public interface BrunchRole extends GrantedAuthority {
 
-    String USER = "ROLE_USER";
-    String ADMIN = "ROLE_ADMIN";
+    String ROLE_USER = "ROLE_USER";
+    String ROLE_ADMIN = "ROLE_ADMIN";
 
     String getRole();
 
