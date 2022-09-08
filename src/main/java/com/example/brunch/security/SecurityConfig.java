@@ -66,7 +66,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider jwtAuthenticationProvider() {
-        return new JwtAuthenticationProvider(jwtUtils, brunchUserDetailsService);
+        return new JwtAuthenticationProvider(jwtUtils);
     }
 
     @Bean
@@ -85,6 +85,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        return new JwtAuthenticationEntryPoint();
+    }
+
+    @Bean
     public PasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -97,7 +102,7 @@ public class SecurityConfig {
         http.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
                 .mvcMatchers("/admin/**").hasAuthority(BrunchRole.ROLE_ADMIN)

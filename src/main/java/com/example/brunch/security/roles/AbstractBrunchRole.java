@@ -22,7 +22,7 @@ public abstract class  AbstractBrunchRole implements BrunchRole {
                 return new UserRole();
             default:
                 LOGGER.error("No such role found: {}", code);
-                return null;
+                throw new RuntimeException("No such role found: " + code);
         }
     }
 

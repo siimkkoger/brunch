@@ -30,6 +30,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final HttpServletResponse response,
             final FilterChain filterChain) throws IOException, ServletException {
         LOGGER.debug("Entered JwtAuthenticationFilter");
+        if (request.getServletPath().equals("/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -39,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         String token = authHeader.replace("Bearer ", "");
-        // JwtAuthenticationProvider authenticates it
         SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(token));
         filterChain.doFilter(request, response);
     }

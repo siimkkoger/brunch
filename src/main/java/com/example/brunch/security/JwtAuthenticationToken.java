@@ -1,14 +1,16 @@
 package com.example.brunch.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
-    private UserDetails principal;
+    private String username;
     private String token;
 
     public JwtAuthenticationToken(String token) {
@@ -16,10 +18,11 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         this.token = token;
     }
 
-    public JwtAuthenticationToken(UserDetails principal, String token) {
-        super(principal.getAuthorities());
-        this.principal = principal;
+    public JwtAuthenticationToken(Collection<GrantedAuthority> grantedAuthorities, String token, String username) {
+        super(grantedAuthorities);
         this.token = token;
+        this.username = username;
+        this.setAuthenticated(true);
     }
 
     public String getToken() {
@@ -30,18 +33,13 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         this.token = token;
     }
 
-    public void setPrincipal(UserDetails principal) {
-        this.principal = principal;
-    }
-
     @Override
     public Object getCredentials() {
         return token;
     }
 
     @Override
-    public UserDetails getPrincipal() {
-        return principal;
+    public Object getPrincipal() {
+        return username;
     }
-
 }
