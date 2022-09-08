@@ -7,6 +7,7 @@ import com.example.brunch.util.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,8 +39,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             LOGGER.debug("Successful jwt authentication!");
             return authenticated;
         } catch (Exception e) {
-            LOGGER.error("Couldn't authenticate jwt: {}", e.getMessage());
-            return authentication;
+            throw new InsufficientAuthenticationException("Failed to authenticate through jwt: " + e.getMessage());
         }
     }
 

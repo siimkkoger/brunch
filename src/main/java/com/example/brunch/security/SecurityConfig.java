@@ -1,6 +1,8 @@
 package com.example.brunch.security;
 
 import com.example.brunch.BrunchUserDetailsService;
+import com.example.brunch.security.exceptions.BasicAuthenticationEntryPoint;
+import com.example.brunch.security.exceptions.JwtAuthenticationEntryPoint;
 import com.example.brunch.security.filters.BrunchBasicAuthenticationFilter;
 import com.example.brunch.security.filters.JwtAuthenticationFilter;
 import com.example.brunch.security.providers.JwtAuthenticationProvider;
@@ -75,18 +77,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+        return new JwtAuthenticationEntryPoint();
+    }
+
+    @Bean
+    public BasicAuthenticationEntryPoint basicAuthenticationEntryPoint() {
+        return new BasicAuthenticationEntryPoint();
+    }
+
+    @Bean
     public BasicAuthenticationFilter brunchBasicAuthenticationFilter() {
-        return new BrunchBasicAuthenticationFilter(authenticationManagerBean(), jwtUtils);
+        return new BrunchBasicAuthenticationFilter(authenticationManagerBean(), jwtUtils, basicAuthenticationEntryPoint());
     }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
-    }
-
-    @Bean
-    public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
-        return new JwtAuthenticationEntryPoint();
+        return new JwtAuthenticationFilter(jwtAuthenticationEntryPoint());
     }
 
     @Bean

@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +24,9 @@ public class BrunchBasicAuthenticationFilter extends BasicAuthenticationFilter {
 
     public BrunchBasicAuthenticationFilter(
             final AuthenticationManager authenticationManager,
-            final JwtService jwtUtils) {
-        super(authenticationManager);
+            final JwtService jwtUtils,
+            final AuthenticationEntryPoint authenticationEntryPoint) {
+        super(authenticationManager, authenticationEntryPoint);
         this.jwtUtils = jwtUtils;
     }
 
