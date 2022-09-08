@@ -17,8 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class BrunchBasicAuthenticationFilter extends BasicAuthenticationFilter {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(BrunchBasicAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrunchBasicAuthenticationFilter.class);
 
     private final JwtService jwtUtils;
 
