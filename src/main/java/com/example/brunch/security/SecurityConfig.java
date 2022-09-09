@@ -114,7 +114,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .mvcMatchers("/admin/**").hasAuthority(BrunchRole.ROLE_ADMIN)
                 .mvcMatchers("/api/**", "/login", "/logout").authenticated()
-                .mvcMatchers("/register").permitAll()
+                .mvcMatchers("/register", "/test/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class)

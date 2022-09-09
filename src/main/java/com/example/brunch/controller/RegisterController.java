@@ -2,6 +2,7 @@ package com.example.brunch.controller;
 
 import com.example.brunch.dbmodel.AccountEntity;
 import com.example.brunch.form.RegisterForm;
+import com.example.brunch.security.exceptions.BrunchException;
 import com.example.brunch.service.BrunchAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,16 @@ public class RegisterController {
             return true;
         }
         return false;
+    }
+
+    @PostMapping(value = "/test/brunchexception")
+    boolean testBrunchError() {
+        throw new BrunchException(BrunchException.Type.ENTITY_NOT_FOUND, "Works!");
+    }
+
+    @PostMapping(value = "/test/exception")
+    boolean testGeneralError() {
+        throw new RuntimeException("General runtime exception.");
     }
 
 }
